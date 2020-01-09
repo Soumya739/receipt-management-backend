@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(version: 2020_01_08_232106) do
   end
 
   create_table "receipts", force: :cascade do |t|
+    t.string "image_url"
     t.string "store"
     t.float "total_amount"
     t.date "generated_on"
