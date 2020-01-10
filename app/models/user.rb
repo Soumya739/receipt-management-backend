@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+    has_secure_password
+    
     has_many :receipts
 
     validates :username, :email, :city, :country, :state, :contact_num, presence: true
