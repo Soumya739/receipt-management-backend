@@ -3,7 +3,7 @@ class AuthController < ApplicationController
         user = User.find_by(email: params[:email])
         if user && user.authenticate(params[:password])
           token = issue_token(user)
-          render json: {username: user.username, email: user.email, id: user.id, jwt: token}
+          render json: {user: user, jwt: token}
         else
           render json: {error: 'User or password could not be matched'}, status: 401
         end

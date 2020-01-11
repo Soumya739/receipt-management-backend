@@ -13,7 +13,15 @@ class UsersController < ApplicationController
         user = User.new(set_param)
         if user.save
             render :json => user
+        else 
+            render json: {error: "try again..."}, status: 401
         end
+    end
+
+    def update
+        user = User.find(params[:id])
+        user.update(set_param)
+        render :json => user
     end
 
     private
