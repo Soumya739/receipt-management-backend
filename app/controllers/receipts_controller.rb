@@ -11,15 +11,16 @@ class ReceiptsController < ApplicationController
     end
 
     def create
+        expense_array = params[:expense_type].split(',') 
         receipt = Receipt.new(set_param)
+        receipt.expense_type = expense_array
         if receipt.save
             render :json => receipt
         end
     end
-
     private
 
     def set_param
-        params.require(:receipt).permit(:image_url, :store, :total_amount, :generated_on, :user_id )
+        params.permit(:image, :store, :total_amount, :generated_on, :user_id)
     end
 end

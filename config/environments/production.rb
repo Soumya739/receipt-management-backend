@@ -15,7 +15,13 @@ Rails.application.configure do
 
   # Ensures that a master key has been made available in either ENV["RAILS_MASTER_KEY"]
   # or in config/master.key. This key is used to decrypt credentials (and other encrypted files).
-  # config.require_master_key = true
+  config.require_master_key = true
+  
+  # Store files on Amazon S3
+  config.active_storage.service = :amazon
+
+config.action_mailer.default_url_options = { host: 'localhost:3000' }
+Rails.application.routes.default_url_options[:host] = 'localhost:3000'
 
   # Disable serving static files from the `/public` folder by default since
   # Apache or NGINX already handles this.
