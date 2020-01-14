@@ -10,6 +10,12 @@ class ReceiptsController < ApplicationController
         render :json => receipt
     end
 
+
+    def show_user_receipts
+        receipts = Receipt.where(user_id: user_id)
+        render :json => receipts
+    end
+
     def create
         expense_array = params[:expense_type].split(',') 
         receipt = Receipt.new(set_param)
