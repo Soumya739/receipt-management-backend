@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_12_064816) do
+ActiveRecord::Schema.define(version: 2020_01_14_235023) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,9 +54,10 @@ ActiveRecord::Schema.define(version: 2020_01_12_064816) do
     t.float "total_amount"
     t.date "generated_on"
     t.integer "user_id"
-    t.string "expense_type",  array: true
+    t.string "expense_type", array: true
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["expense_type"], name: "index_receipts_on_expense_type", using: :gin
   end
 
   create_table "users", force: :cascade do |t|
@@ -69,6 +70,7 @@ ActiveRecord::Schema.define(version: 2020_01_12_064816) do
     t.integer "contact_num"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "gender"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

@@ -1,7 +1,7 @@
 class ReceiptSerializer < ActiveModel::Serializer
   include Rails.application.routes.url_helpers
 
-  attributes :id, :generated_on, :total_amount, :store, :expense_type, :image 
+  attributes :id, :generated_on, :total_amount, :store, :expense_type, :created_at, :image 
 
   def image
     return unless object.image.attached?
