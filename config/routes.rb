@@ -4,7 +4,8 @@ Rails.application.routes.draw do
   resources :receipts
   resources :users
   post '/auth', to: 'auth#create'
-  get '/current_user', to: 'auth#show'
+  post '/current_user', to: 'users#show_current_user'
   post '/user_receipts', to: 'receipts#show_user_receipts'
-
+  post '/filtered_receipts', to: 'receipts#get_filtered_receipts_data'
+  post '/stores', to: 'receipts#get_all_user_stores'
 end

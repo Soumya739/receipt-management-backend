@@ -9,6 +9,11 @@ class UsersController < ApplicationController
         render :json => user
     end
 
+    def show_current_user
+        user = current_user
+        render :json => user
+    end
+
     def create
         user = User.new(set_param)
         if user.save
@@ -19,9 +24,14 @@ class UsersController < ApplicationController
     end
 
     def update
-        user = User.find(params[:id])
-        user.update(set_param)
-        render :json => user
+        user1 = current_user
+        user2 = User.find(params[:id])
+        if user1 == user2
+            user1.update(set_param)
+            render :json => user1
+        else 
+            render json: {error: "try again..."}, status: 401
+        end
     end
 
     private
