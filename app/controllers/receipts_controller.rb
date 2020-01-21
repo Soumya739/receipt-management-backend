@@ -18,11 +18,54 @@ class ReceiptsController < ApplicationController
 
     def create
         user = current_user
-        expense_array = params[:expense_type].split(',')
-        expense_array_lowercase = expense_array.map do |category| 
+        # expense_array = params[:expense_type].split(',')
+        receipt = Receipt.new(image: params[:image])
+        receipt.user_id = user.id
+        if receipt.save
+            @receipt_url = receipt.image.service_url
+            
+            if !subscription_key
+                render json: {error: "Set your environment variables for your subscription key and endpoint."}, status: 500       
+            end
+            # uriBase = endpoint + "vision/v2.1/ocr"
+            # header = {'Content-Type': 'application/json', 'Ocp-Apim-Subscription-Key': subscription_key}
+            # uri = URI.parse(uriBase)
+            # data= {url: @receipt_url}
+            # http = Net::HTTP.new(uri.host, uri.port)
+            # request = Net::HTTP::Post.new(uri.request_uri, header)
+            # http.use_ssl = true
+            # request.body = data.to_json
+            # byebug
+            # response = http.request(request)
+            
+            uriBase = endpoint + "vision/v2.1/read/core/asyncBatchAnalyze"
+            header = {'Content-Type': 'application/json', 'Ocp-Apim-Subscription-Key': subscription_key}
+            uri = URI.parse(uriBase)
+            data= {url: @receipt_url}
+            http = Net::HTTP.new(uri.host, uri.port)
+            request = Net::HTTP::Post.new(uri.request_uri, header)
+            http.use_ssl = true
+            request.body = data.to_json
+            response = http.request(request)
+            sleep 10
+            operationLocation = response["Operation-Location"]
+            uri = URI.parse(operationLocation)
+            header = {'Content-Type': 'application/json', 'Ocp-Apim-Subscription-Key': subscription_key}
+            http = Net::HTTP.new(uri.host, uri.port)
+            req = Net::HTTP::Get.new(uri.request_uri, header)
+            http.use_ssl = true
+            rep = http.request(req)
+            render json: {imageData: [rep.body], receiptId: receipt.id}
+        else 
+            render json: {error: "try again..."}, status: 401
+        end
+    end
+
+    def update
+        user = current_user
+        expense_array_lowercase = params[:expense_type].map do |category| 
             category.downcase
         end 
-        
         expense_type_ids = expense_array_lowercase.map do |category|
             expense_category = ExpenseType.find_by(category: category)
             if !expense_category
@@ -30,10 +73,11 @@ class ReceiptsController < ApplicationController
             end
             expense_category.id
         end
-
-        receipt = Receipt.new(set_param)
-        receipt.user_id = user.id
+        receipt = Receipt.find(params[:receipt_id])
         receipt.expense_type = expense_array_lowercase
+        receipt.store = params[:store]
+        receipt.total_amount = params[:total_amount]
+        receipt.generated_on = params[:generated_on]
         if receipt.save
             expense_type_ids.each do |expense_type_id|
                 ReceiptExpenseType.create(receipt_id: receipt.id, expense_type_id: expense_type_id)
@@ -42,17 +86,8 @@ class ReceiptsController < ApplicationController
         else 
             render json: {error: "try again..."}, status: 401
         end
-    end
 
-    # def get_filtered_receipts_data
-    #     user = current_user
-    #     receipts = user.receipts
-    #     if params[:filterType] == "store"
-    #         receipts_filtered_by_store = receipts.where(store: params[:subFilterType])
-    #         render :json => receipts_filtered_by_store
-    #     end
-    #     # render :json => user_receipts
-    # end
+    end
 
     def get_all_user_stores
         user = current_user
