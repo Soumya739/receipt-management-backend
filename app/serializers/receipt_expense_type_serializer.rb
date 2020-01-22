@@ -1,3 +1,3 @@
 class ReceiptExpenseTypeSerializer < ActiveModel::Serializer
-  attributes :id, :receipt, :expense_type
+  attributes :id, :receipt_id, :expense_type_id, :amount
 end

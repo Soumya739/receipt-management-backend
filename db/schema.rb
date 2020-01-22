@@ -45,6 +45,7 @@ ActiveRecord::Schema.define(version: 2020_01_14_235023) do
   create_table "receipt_expense_types", force: :cascade do |t|
     t.integer "receipt_id"
     t.integer "expense_type_id"
+    t.integer "amount"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

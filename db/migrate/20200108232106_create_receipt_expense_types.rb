@@ -3,6 +3,7 @@ class CreateReceiptExpenseTypes < ActiveRecord::Migration[6.0]
     create_table :receipt_expense_types do |t|
       t.integer :receipt_id
       t.integer :expense_type_id
+      t.integer :amount
 
       t.timestamps
     end

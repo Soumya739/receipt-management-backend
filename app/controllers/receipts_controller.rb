@@ -23,7 +23,9 @@ class ReceiptsController < ApplicationController
         receipt.user_id = user.id
         if receipt.save
             @receipt_url = receipt.image.service_url
-            
+           
+            subscription_key = "Add your key here"
+            endpoint = "Add endpoint here"
             if !subscription_key
                 render json: {error: "Set your environment variables for your subscription key and endpoint."}, status: 500       
             end
@@ -65,7 +67,9 @@ class ReceiptsController < ApplicationController
         user = current_user
         expense_array_lowercase = params[:expense_type].map do |category| 
             category.downcase
-        end 
+        end
+        number_of_expense_types = params[:expense_type].length
+        amt_per_expense_type = (params[:total_amount].to_f/number_of_expense_types).ceil
         expense_type_ids = expense_array_lowercase.map do |category|
             expense_category = ExpenseType.find_by(category: category)
             if !expense_category
@@ -80,7 +84,7 @@ class ReceiptsController < ApplicationController
         receipt.generated_on = params[:generated_on]
         if receipt.save
             expense_type_ids.each do |expense_type_id|
-                ReceiptExpenseType.create(receipt_id: receipt.id, expense_type_id: expense_type_id)
+                ReceiptExpenseType.create(receipt_id: receipt.id, expense_type_id: expense_type_id, amount: amt_per_expense_type)
             end
             render :json => receipt
         else 
