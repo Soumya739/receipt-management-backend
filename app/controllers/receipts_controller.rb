@@ -23,7 +23,7 @@ class ReceiptsController < ApplicationController
         receipt.user_id = user.id
         if receipt.save
             @receipt_url = receipt.image.service_url
-           
+            
             subscription_key = "Add your key here"
             endpoint = "Add endpoint here"
             if !subscription_key
@@ -101,6 +101,18 @@ class ReceiptsController < ApplicationController
             stores.push(receipt.store)
         end
         render :json => stores.uniq
+    end
+
+    def destroy
+        receipt = Receipt.find(params[:receipt_id])
+        receipt_expense_type = ReceiptExpenseType.where(receipt_id: receipt.id)
+        receipt_expense_type.map do |receipt_expense|
+            receipt_expense.destroy
+        end
+        receipt.destroy
+        # user = current_user
+        # user_receipts = user.receipts
+        # render :json => user_receipts
     end
 
     private
